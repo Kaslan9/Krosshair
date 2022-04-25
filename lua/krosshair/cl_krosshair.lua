@@ -13,6 +13,7 @@ local function DrawCrosshair()
     if not GetConVar("cl_krosshair"):GetBool() then return end
     if not IsValid(client) || client:IsSpec() then return end
 
+    // kinda ugly but ConVar sometimes doesn't exist on autorun so I have to make sure to remove it here
     if ConVarExists("ttt_disable_crosshair") && not GetConVar("ttt_disable_crosshair"):GetBool() then
         GetConVar("ttt_disable_crosshair"):SetBool(true)
     end

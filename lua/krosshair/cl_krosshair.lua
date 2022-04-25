@@ -1,4 +1,3 @@
-
 local bulletfired = false
 local firetime = CurTime()
 local w,h = ScrW(), ScrH()
@@ -8,13 +7,17 @@ local shape, length, thickness, origianlgap, dot, static, gapincrase, outline, o
 local r,g,b,a 
 local centerx, centery
 
-
 local function DrawCrosshair()
+
     local client = LocalPlayer()
-    //if not IsValid(client) then return end
     if not GetConVar("cl_krosshair"):GetBool() then return end
     if not IsValid(client) || client:IsSpec() then return end
-    
+
+    if ConVarExists("ttt_disable_crosshair") && not GetConVar("ttt_disable_crosshair"):GetBool() then
+        GetConVar("ttt_disable_crosshair"):SetBool(true)
+    end
+
+    // get CVAR values
     r,g,b,a= GetConVar("cl_krosshair_red"):GetInt(), GetConVar("cl_krosshair_green"):GetInt(),GetConVar("cl_krosshair_blue"):GetInt(),GetConVar("cl_krosshair_brightness"):GetInt()
 
     centerx = w/2
@@ -58,7 +61,8 @@ local function DrawCrosshair()
         gap = origianlgap
     end
     
-    if shape == 1 || shape == 0 then
+    // Draw Crosshair
+    if shape == 1 || shape == 0 then // make sure shape is Cross or T
 
             if (shape == 0) then
                 // draw top segment
@@ -103,17 +107,16 @@ local function DrawCrosshair()
     elseif (shape == 2) then
         surface.DrawCircle(centerx, centery, length, r,g,b,a) // draw circle crosshair
     end
-
-
 end
 
-local function DynamicCrosshair(ent, bullet)
-    if (not ent:IsValid()) || (not client:IsValid()) then return end 
+local function DynamicCrosshair(ent, bullet) // increase jump
+    local client = LocalPlayer()
+    if (not IsValid(ent)) || (not IsValid(client)) then return end 
     if not (ent == client) then return end
 
     firetime = CurTime()
     bulletfired = true
 end
 
-hook.Add("HUDPaint", "krosshair_HUDPaint", DrawCrosshair)
-hook.Add("EntityFireBullets", "krosshair_HUDPaint", DynamicCrosshair)
+hook.Add("HUDPaint", "krosshair_HUDPaint", DrawCrosshair) // draw crosshair
+hook.Add("EntityFireBullets", "krosshair_HUDPaint", DynamicCrosshair) // change crosshair jump
